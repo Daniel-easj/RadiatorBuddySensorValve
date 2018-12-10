@@ -1,7 +1,7 @@
 from sense_hat import SenseHat
 from datetime import *
 from socket import *
-import time as time
+import time
 import json
 
 # Create an object of the sensehat
@@ -38,7 +38,7 @@ def json_string():
     # Get current time
     now = datetime.now()
     # Put everything into a JSON string
-    # Get Mac-address(Id), convert to hexcode, then lastly to string
+    # Get Mac-address(Id) of the specific interface
     json_data = {"Id": get_MAC(ETHERNET_INTERFACE),
                  "Temperature": temperature,
                  # Format current time to the folllowing format
@@ -49,13 +49,3 @@ def json_string():
 
 socket = socket(AF_INET, SOCK_DGRAM)
 socket.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
-# Infinite loop
-while True:
-    # Calls function to convert to JSON
-    data = json_string()
-    # Sends the JSON object as bytes
-    socket.sendto(bytes(data, "UTF-8"), ('<broadcast>', BROADCAST_TO_PORT))
-    # Print the JSON object to console
-    print(data)
-    # Wait 30 seconds
-    time.sleep(30)

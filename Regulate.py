@@ -1,46 +1,31 @@
 from GetData import *
-from datetime import datetime, timedelta
-import time
 from Sensor import *
 
 
 this_room = get_room(get_MAC(ETHERNET_INTERFACE))
 
 
-def regulate_temp(forecast, indoor_sensor_data, outdoor_sensor_data, global_optimal_temperature, minimum_room_temperature, maximum_room_temperature):
+def temperature_to_adjust(forecast, indoor_sensor_data, global_optimal_temperature, minimum_room_temperature, maximum_room_temperature):
     # Average of forecast for X time
-    forecast_total = 0
-    forecast_number_of_elements = 0
-    for element in forecast:
-        total += element.temperature
-        number_of_elements += 1
-    average_forecast = total / number_of_elements
+    if len(forecast) > 0:
+        forecast_total = 0
+        forecast_number_of_elements = 0
+        for element in forecast:
+            forecast_total += element.temperature
+            forecast_number_of_elements += 1
+        average_forecast_temperature = forecast_total / forecast_number_of_elements
     # Get current temp of Pi
     current_sensor_temp = get_sensor_temperature()
     # Current outdoor temp
-
+    current_outdoor_temp = newest_outdoor_temperature()
     # Average of previous X time indoor sensor meassurement
-    indoor_total = 0
-    indoor_number_of_elements = 0
-    for 
+    if len(indoor_sensor_data) > 0:
+        indoor_total = 0
+        indoor_number_of_elements = 0
+        for element in indoor_sensor_data:
+            indoor_total += element.temperature
+            indoor_number_of_elements += 1
+        average_indoor_temperature = indoor_total / indoor_number_of_elements
+
     temperature_to_set = 0
     return temperature_to_set
-
-
-while (True):
-    now = datetime.now()
-    ten_hours_from_now = now + timedelta(hours=10)
-    one_day_before_now = now + timedelta(hours=-24)
-    one_day_forecast_list = create_forecast_list(
-        datetime_hours_from_now=ten_hours_from_now)
-    global_optimal_temperature = this_room.optimalTemperature
-    minimum_room_temperature = this_room.minTemperature
-    maximum_room_temperature = this_room.maxTemperature
-    indoor_pidata_list_one_day_old = create_sensor_list(
-        datetime_start=one_day_before_now)
-    # Function to regulate temperature
-
-    regulate_temp(one_day_forecast_list, indoor_pidata_list_one_day_old, TODO, global_optimal_temperature,
-                  minimum_room_temperature, maximum_room_temperature)
-
-    time.sleep(300)
