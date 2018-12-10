@@ -2,27 +2,26 @@ from GetData import *
 from Sensor import *
 
 
+def average_temperature(list_of_objects):
+    if len(list_of_objects) > 0:
+        total = 0
+        number_of_elements = 0
+        for element in list_of_objects:
+            total += element.temperature
+            number_of_elements += 1
+    return total / number_of_elements
+
+
 def suggested_new_temperature(forecast, indoor_sensor_data, global_optimal_temperature, minimum_room_temperature, maximum_room_temperature):
+    new_temperature = 0
+    temperature_adjustment = 0
     # Average of forecast for X time
-    if len(forecast) > 0:
-        forecast_total = 0
-        forecast_number_of_elements = 0
-        for element in forecast:
-            forecast_total += element.temperature
-            forecast_number_of_elements += 1
-        average_forecast_temperature = forecast_total / forecast_number_of_elements
+    forecast_average = average_temperature(forecast)
     # Get current temp of Pi
     current_sensor_temp = get_sensor_temperature()
     # Current outdoor temp
     current_outdoor_temp = newest_outdoor_temperature()
     # Average of previous X time indoor sensor meassurement
-    if len(indoor_sensor_data) > 0:
-        indoor_total = 0
-        indoor_number_of_elements = 0
-        for element in indoor_sensor_data:
-            indoor_total += element.temperature
-            indoor_number_of_elements += 1
-        average_indoor_temperature = indoor_total / indoor_number_of_elements
+    indoor_average = average_temperature(indoor_sensor_data)
 
-    temperature_to_set = 0
-    return temperature_to_set
+    return new_temperature

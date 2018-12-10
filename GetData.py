@@ -99,12 +99,12 @@ def get_room(MAC_address):
     for element in room_api_list:
         location_string = element['location']
         if location_string.strip() == '':
-            location_string = None
+            location_string_fixed = None
         else:
-            location_string.strip()
+            location_string_fixed = location_string.strip()
         if MAC_address == element['macAddress']:
             room_object = create_new_name('room')
-            room_object = RoomData.create_roomdata(element['macAddress'], location_string, element['inDoor'],
+            room_object = RoomData.create_roomdata(element['macAddress'], location_string_fixed, element['inDoor'],
                                                    element['optimalTemperature'], element['minTemperature'], element['maxTemperature'])
     return room_object
 

@@ -31,6 +31,5 @@ while True:
     suggested_new_temperature = suggested_new_temperature(one_day_forecast_list, indoor_pidata_list_one_day_old, global_optimal_temperature,
                                                           minimum_room_temperature, maximum_room_temperature)
 
-    sense.show_message(float(suggested_new_temperature))
-    # Wait 30 seconds
-    time.sleep(30)
+    sense.show_message(round(suggested_new_temperature, 1))
+    time.sleep(15)

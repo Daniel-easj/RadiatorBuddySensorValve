@@ -33,7 +33,7 @@ def get_MAC(interface):
 
 
 def json_string():
-        # Get temperature
+    # Get temperature
     temperature = get_sensor_temperature
     # Get current time
     now = datetime.now()
