@@ -41,6 +41,7 @@ def create_forecast_list(datetime_hours_from_now):
 
 
 def fix_sensor_data(sensor_data_list):
+    final_list = list()
     for element in sensor_data_list:
         # Fix inserted "T" in timestamp, remove whitespace from location, round temperature
         datetime_string_with_T = element['timestamp']
@@ -59,63 +60,31 @@ def fix_sensor_data(sensor_data_list):
         pidata_object = PiData.create_pidata(element['id'], temperature_with_2_decimals,
                                              location_string_fixed, element['inDoor'],
                                              datetime_object)
-        sensor_data_list.append(pidata_object)
-    return sensor_data_list
+        final_list.append(pidata_object)
+    return final_list
 
 
 def create_sensor_list(MAC_Address=None, datetime_start=datetime(2000, 1, 1), datetime_end=datetime(3000, 1, 1)):
     sensor_api_list = extract_json_api_data(SENSOR_REST_URI)
     pi_sensor_list = list()
-    for element in sensor_api_list:
-        # Fix inserted "T" in timestamp, remove whitespace from location, round temperature
-        datetime_string_with_T = element['timestamp']
-        datetime_string = datetime_string_with_T.replace('T', ' ')
-        datetime_object = datetime.strptime(
-            datetime_string, '%Y-%m-%d %H:%M:%S')
-        location_string = element['location']
-        if location_string.strip() == '':
-            location_string_fixed = None
-        else:
-            location_string_fixed = location_string.strip()
-        too_long_temperature = element['temperature']
-        temperature_with_2_decimals = round(too_long_temperature, 2)
-        # Create PiData object, with API data
-        pidata_object = create_new_name('reading')
-        pidata_object = PiData.create_pidata(element['id'], temperature_with_2_decimals,
-                                             location_string_fixed, element['inDoor'],
-                                             datetime_object)
+    fixed_sensor_list = fix_sensor_data(sensor_api_list)
+    for entry in fixed_sensor_list:
         if MAC_Address != None:
-            if pidata_object.id == MAC_Address and datetime_start <= datetime_object and datetime_end > datetime_object:
-                pi_sensor_list.append(pidata_object)
+            if entry.id == MAC_Address and datetime_start <= entry.timestamp and datetime_end > entry.timestamp:
+                pi_sensor_list.append(entry)
         else:
-            if datetime_start <= datetime_object and datetime_end > datetime_object:
-                pi_sensor_list.append(pidata_object)
+            if datetime_start <= entry.timestamp and datetime_end > entry.timestamp:
+                pi_sensor_list.append(entry)
     return pi_sensor_list
 
 
 def newest_outdoor_temperature():
     sensor_api_list = extract_json_api_data(SENSOR_REST_URI)
     pi_sensor_list = list()
-    for element in sensor_api_list:
-        # Fix inserted "T" in timestamp, remove whitespace from location, round temperature
-        datetime_string_with_T = element['timestamp']
-        datetime_string = datetime_string_with_T.replace('T', ' ')
-        datetime_object = datetime.strptime(
-            datetime_string, '%Y-%m-%d %H:%M:%S')
-        location_string = element['location']
-        if location_string.strip() == '':
-            location_string_fixed = None
-        else:
-            location_string_fixed = location_string.strip()
-        too_long_temperature = element['temperature']
-        temperature_with_2_decimals = round(too_long_temperature, 2)
-        # Create PiData object, with API data
-        pidata_object = create_new_name('reading')
-        pidata_object = PiData.create_pidata(element['id'], temperature_with_2_decimals,
-                                             location_string_fixed, element['inDoor'],
-                                             datetime_object)
-        if element['inDoor'] == False:
-            pi_sensor_list.append(pidata_object)
+    fixed_sensor_list = fix_sensor_data(sensor_api_list)
+    for element in fixed_sensor_list:
+        if element.inDoor == False:
+            pi_sensor_list.append(element)
         if len(pi_sensor_list) != 1:
             if pi_sensor_list[0].timestamp > pi_sensor_list[-1].timestamp:
                 del pi_sensor_list[-1]
@@ -140,7 +109,7 @@ def get_room(MAC_address):
     return room_object
 
 
-# print(PiData.__str__(newest_outdoor_temperature()))
-test = create_sensor_list()
-for element in test:
-    print(PiData.__str__(element))
+print(PiData.__str__(newest_outdoor_temperature()))
+# test = create_sensor_list()
+# for element in test:
+#     print(PiData.__str__(element))

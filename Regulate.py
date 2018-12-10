@@ -2,10 +2,7 @@ from GetData import *
 from Sensor import *
 
 
-this_room = get_room(get_MAC(ETHERNET_INTERFACE))
-
-
-def temperature_to_adjust(forecast, indoor_sensor_data, global_optimal_temperature, minimum_room_temperature, maximum_room_temperature):
+def suggested_new_temperature(forecast, indoor_sensor_data, global_optimal_temperature, minimum_room_temperature, maximum_room_temperature):
     # Average of forecast for X time
     if len(forecast) > 0:
         forecast_total = 0
