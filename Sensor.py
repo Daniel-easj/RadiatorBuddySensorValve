@@ -1,22 +1,27 @@
 from sense_hat import SenseHat
 from datetime import *
 from socket import *
-import time as t
+import time as time
 import json
-import uuid
 
 # Create an object of the sensehat
 sense = SenseHat()
 
 # Port to broadcast to
 BROADCAST_TO_PORT = 11912
-
+# Interface name
 ETHERNET_INTERFACE = 'wlan0'
+
+# Function to get temperature
+
+
+def get_sensor_temperature():
+    return sense.get_temperature()
 
 # Function to get MAC-address
 
 
-def getMAC(interface):
+def get_MAC(interface):
     # Return the MAC address of the specified interface
     try:
         mac_hex_string = open('/sys/class/net/%s/address' % interface).read()
@@ -29,12 +34,12 @@ def getMAC(interface):
 
 def json_string():
         # Get temperature
-    temperature = sense.get_temperature()
+    temperature = get_sensor_temperature
     # Get current time
     now = datetime.now()
     # Put everything into a JSON string
     # Get Mac-address(Id), convert to hexcode, then lastly to string
-    json_data = {"Id": getMAC(ETHERNET_INTERFACE),
+    json_data = {"Id": get_MAC(ETHERNET_INTERFACE),
                  "Temperature": temperature,
                  # Format current time to the folllowing format
                  "Timestamp": now.strftime("%Y-%m-%d %H:%M:%S")}
@@ -53,4 +58,4 @@ while True:
     # Print the JSON object to console
     print(data)
     # Wait 30 seconds
-    t.sleep(30)
+    time.sleep(30)

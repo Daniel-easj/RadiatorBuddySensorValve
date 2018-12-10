@@ -3,39 +3,25 @@ import json
 import PiData
 import WeatherData
 import random
+import RoomData
 from datetime import datetime
 
 WEATHER_REST_URI = 'https://radiatorbuddy.azurewebsites.net/api/weatherdata'
 SENSOR_REST_URI = 'https://radiatorbuddy.azurewebsites.net/api/sensorsdata'
-
-# Function to fake optimal temp until real optimal temp can be gathered
-
-
-def fake_temp(minimum_number, maximum_number):
-    return random.randint(minimum_number, maximum_number)
+ROOMS_REST_URI = 'https://radiatorbuddy.azurewebsites.net/api/sensorsdata/rooms'
 
 
 # Function to create incremented name for each meassurement
 
 
-def create_new_pi_name():
-    base_string = 'reading'
-    counter = 1
-    name = base_string + str(counter)
-    return name
-
-# Function to create incremented name for each forecast
-
-
-def create_new_forecast_name():
-    base_string = 'forecast'
+def create_new_name(base_string):
+    base_string = base_string
     counter = 1
     name = base_string + str(counter)
     return name
 
 
 # Function to create a list of forecasts, from objects
-
 
 def create_forecast_list(datetime_hours_from_now):
     weather_api_request = requests.get(WEATHER_REST_URI)
@@ -46,7 +32,7 @@ def create_forecast_list(datetime_hours_from_now):
         datetime_string = element['dt_txt']
         datetime_object = datetime.strptime(
             datetime_string, '%Y-%m-%d %H:%M:%S')
-        forecast_object = create_new_forecast_name()
+        forecast_object = create_new_name('forecast')
         forecast_object = WeatherData.create_weatherdata(
             element['main']['temp'], datetime_object, element['clouds']['all'])
         if datetime_object <= datetime_hours_from_now:
@@ -56,7 +42,6 @@ def create_forecast_list(datetime_hours_from_now):
 
 # Function to create a list of meassurements, from objects, taken by all sensors
 
-# Filter on inDoor as well???
 def create_sensor_list(MAC_Address=None, datetime_start=datetime(2000, 1, 1), datetime_end=datetime(3000, 1, 1)):
     sensor_api_request = requests.get(SENSOR_REST_URI)
     sensor_api_list = json.loads(sensor_api_request.text)
@@ -76,7 +61,7 @@ def create_sensor_list(MAC_Address=None, datetime_start=datetime(2000, 1, 1), da
         too_long_temperature = element['temperature']
         temperature_with_2_decimals = round(too_long_temperature, 2)
         # Create PiData object, with API data
-        pidata_object = create_new_pi_name()
+        pidata_object = create_new_name('reading')
         pidata_object = PiData.create_pidata(element['id'], temperature_with_2_decimals,
                                              location_string, element['inDoor'],
                                              datetime_object)
@@ -89,9 +74,24 @@ def create_sensor_list(MAC_Address=None, datetime_start=datetime(2000, 1, 1), da
     return pi_sensor_list
 
 
-# Test of formatting
-sensor_list = create_sensor_list()
-print(len(sensor_list))
-for element in sensor_list:
-    # PiData "ToString()"
-    print(PiData.__str__(element))
+# Function to create a list of rooms
+
+def get_room(MAC_address):
+    room_api_request = requests.get(ROOMS_REST_URI)
+    room_api_list = json.loads(room_api_request.text)
+    room_api_list == room_api_request.json()
+    for element in room_api_list:
+        location_string = element['location']
+        if location_string.strip() == '':
+            location_string = None
+        else:
+            location_string.strip()
+        if MAC_address == element['macAddress']:
+            room_object = create_new_name('room')
+            room_object = RoomData.create_roomdata(element['macAddress'], location_string, element['inDoor'],
+                                                   element['optimalTemperature'], element['minTemperature'], element['maxTemperature'])
+    return room_object
+
+    # Test of formatting
+room = get_room('b8:27:eb:94:aa:a3')
+print(RoomData.__str__(room))
