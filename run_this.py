@@ -1,3 +1,2 @@
-from Regulate import *
-from Sensor import *
-
+import Regulate
+import Sensor

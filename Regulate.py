@@ -22,7 +22,7 @@ def regulate_temp(forecast, indoor_sensor_data, outdoor_sensor_data, global_opti
     # Average of previous X time indoor sensor meassurement
     indoor_total = 0
     indoor_number_of_elements = 0
-    for
+    for 
     temperature_to_set = 0
     return temperature_to_set
 

@@ -99,12 +99,12 @@ def newest_outdoor_temperature():
                                              datetime_object)
         if element['inDoor'] == False:
             pi_sensor_list.append(pidata_object)
-        while len(pi_sensor_list) > 1:
-            if pi_sensor_list[0].timestamp > pi_sensor_list[len(pi_sensor_list)].timestamp:
+        if len(pi_sensor_list) != 1:
+            if pi_sensor_list[0].timestamp > pi_sensor_list[-1].timestamp:
                 del pi_sensor_list[-1]
-            if pi_sensor_list[0].timestamp < pi_sensor_list[len(pi_sensor_list)].timestamp:
+            if pi_sensor_list[0].timestamp < pi_sensor_list[-1].timestamp:
                 pi_sensor_list.insert(
-                    1, pi_sensor_list[len(pi_sensor_list)])
+                    0, pi_sensor_list[-1])
     return pi_sensor_list[0]
 
 # Function to create a list of rooms
@@ -129,7 +129,7 @@ def get_room(MAC_address):
     # Test of formatting
 
 
-# print(newest_outdoor_temperature)
-test = create_sensor_list()
-for element in test:
-    print(PiData.__str__(element))
+print(PiData.__str__(newest_outdoor_temperature()))
+# test = create_sensor_list()
+# for element in test:
+#     print(PiData.__str__(element))
