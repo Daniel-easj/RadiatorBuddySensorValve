@@ -74,7 +74,41 @@ def create_sensor_list(MAC_Address=None, datetime_start=datetime(2000, 1, 1), da
     return pi_sensor_list
 
 
+def newest_outdoor_temperature():
+    sensor_api_request = requests.get(SENSOR_REST_URI)
+    sensor_api_list = json.loads(sensor_api_request.text)
+    sensor_api_list == sensor_api_request.json()
+    pi_sensor_list = list()
+    for element in sensor_api_list:
+        # Fix inserted "T" in timestamp, remove whitespace from location, round temperature
+        datetime_string_with_T = element['timestamp']
+        datetime_string = datetime_string_with_T.replace('T', ' ')
+        datetime_object = datetime.strptime(
+            datetime_string, '%Y-%m-%d %H:%M:%S')
+        location_string = element['location']
+        if location_string.strip() == '':
+            location_string = None
+        else:
+            location_string.strip()
+        too_long_temperature = element['temperature']
+        temperature_with_2_decimals = round(too_long_temperature, 2)
+        # Create PiData object, with API data
+        pidata_object = create_new_name('reading')
+        pidata_object = PiData.create_pidata(element['id'], temperature_with_2_decimals,
+                                             location_string, element['inDoor'],
+                                             datetime_object)
+        if element['inDoor'] == False:
+            pi_sensor_list.append(pidata_object)
+        while len(pi_sensor_list) > 1:
+            if pi_sensor_list[0].timestamp > pi_sensor_list[len(pi_sensor_list)].timestamp:
+                del pi_sensor_list[-1]
+            if pi_sensor_list[0].timestamp < pi_sensor_list[len(pi_sensor_list)].timestamp:
+                pi_sensor_list.insert(
+                    1, pi_sensor_list[len(pi_sensor_list)])
+    return pi_sensor_list[0]
+
 # Function to create a list of rooms
+
 
 def get_room(MAC_address):
     room_api_request = requests.get(ROOMS_REST_URI)
@@ -93,5 +127,9 @@ def get_room(MAC_address):
     return room_object
 
     # Test of formatting
-room = get_room('b8:27:eb:94:aa:a3')
-print(RoomData.__str__(room))
+
+
+# print(newest_outdoor_temperature)
+test = create_sensor_list()
+for element in test:
+    print(PiData.__str__(element))
