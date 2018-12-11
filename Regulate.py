@@ -23,5 +23,16 @@ def suggested_new_temperature(forecast, indoor_sensor_data, global_optimal_tempe
     current_outdoor_temp = newest_outdoor_temperature()
     # Average of previous X time indoor sensor meassurement
     indoor_average = average_temperature(indoor_sensor_data)
+    if forecast_average > current_sensor_temp:
+        if minimum_room_temperature == 0:
+            temperature_adjustment += 0
+        if global_optimal_temperature > 0:
+            temperature_adjustment += 0
+    if forecast_average < current_sensor_temp:
+        if (forecast_average - current_outdoor_temp) > 7:
+            if minimum_room_temperature == 0:
+                temperature_adjustment += 0
+            if global_optimal_temperature == 0:
+                temperature_adjustment += 0
 
     return new_temperature
