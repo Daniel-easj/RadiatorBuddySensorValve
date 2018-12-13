@@ -12,10 +12,8 @@ ROOMS_REST_URI = 'https://radiatorbuddy.azurewebsites.net/api/sensorsdata/rooms'
 
 
 def create_new_name(base_string):
-    base_string = base_string
     counter = 1
-    name = base_string + str(counter)
-    return name
+    return base_string + str(counter)
 
 
 def extract_json_api_data(URI):
@@ -78,20 +76,47 @@ def create_sensor_list(MAC_Address=None, datetime_start=datetime(2000, 1, 1), da
     return pi_sensor_list
 
 
-def newest_outdoor_temperature():
-    sensor_api_list = extract_json_api_data(SENSOR_REST_URI)
-    pi_sensor_list = list()
-    fixed_sensor_list = fix_sensor_data(sensor_api_list)
-    for element in fixed_sensor_list:
-        if element.inDoor == False:
-            pi_sensor_list.append(element)
-        if len(pi_sensor_list) != 1:
-            if pi_sensor_list[0].timestamp > pi_sensor_list[-1].timestamp:
-                del pi_sensor_list[-1]
-            if pi_sensor_list[0].timestamp < pi_sensor_list[-1].timestamp:
-                pi_sensor_list.insert(
-                    0, pi_sensor_list[-1])
-    return pi_sensor_list[0]
+def filter_indoor(list_of_PiData_objects, indoor=False):
+    if len(list_of_PiData_objects) != 0:
+        sorting_list = list()
+        for element in list_of_PiData_objects:
+            if element.inDoor == indoor:
+                sorting_list.append(element)
+            if len(sorting_list) != 1 and len(sorting_list) != 0:
+                if sorting_list[0].timestamp > sorting_list[-1].timestamp:
+                    del sorting_list[-1]
+                if sorting_list[0].timestamp < sorting_list[-1].timestamp:
+                    # Move object on last index to first index
+                    sorting_list.insert(
+                        0, sorting_list[-1])
+        if len(sorting_list) != 0:
+            return sorting_list
+
+
+def newest_temperature(list_of_PiData_objects):
+    if len(list_of_PiData_objects) != 0:
+        sorting_list = list()
+        for element in list_of_PiData_objects:
+            sorting_list.append(element)
+            if len(sorting_list) != 1 and len(sorting_list) != 0:
+                if sorting_list[0].timestamp > sorting_list[-1].timestamp:
+                    del sorting_list[-1]
+                if sorting_list[0].timestamp < sorting_list[-1].timestamp:
+                    # Move object on last index to first index
+                    sorting_list.insert(
+                        0, sorting_list[-1])
+        if len(sorting_list) != 0:
+            return sorting_list[0].temperature
+
+
+def average_temperature(list_of_objects):
+    if len(list_of_objects) > 0:
+        total = 0
+        number_of_elements = 0
+        for element in list_of_objects:
+            total += element.temperature
+            number_of_elements += 1
+    return total / number_of_elements
 
 
 def get_room(MAC_address):
@@ -109,7 +134,6 @@ def get_room(MAC_address):
     return room_object
 
 
-print(PiData.__str__(newest_outdoor_temperature()))
-# test = create_sensor_list()
-# for element in test:
-#     print(PiData.__str__(element))
+sensor_list = create_sensor_list()
+indoor_list = filter_indoor(sensor_list, indoor=False)
+print(newest_temperature(indoor_list))
