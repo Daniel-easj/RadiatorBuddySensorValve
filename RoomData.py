@@ -18,5 +18,5 @@ def create_roomdata(macAddress, location, inDoor, optimalTemperature, minTempera
 # Function to display data from WeatherData object in string format
 
 
-def __str__(self):
-    return (f"MAC-Address : {self.macAddress}, location : {self.location}, indoor : {self.inDoor}, optimal temperatur : {self.optimalTemperature}, minimum temperatur : {self.minTemperature}, maximum temperature : {self.maxTemperature}")
+# def __str__(self):
+#     return (f"MAC-Address : {self.macAddress}, location : {self.location}, indoor : {self.inDoor}, optimal temperatur : {self.optimalTemperature}, minimum temperatur : {self.minTemperature}, maximum temperature : {self.maxTemperature}")

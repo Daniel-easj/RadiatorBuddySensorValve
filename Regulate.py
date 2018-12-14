@@ -11,10 +11,11 @@ def suggested_new_temperature(forecast, list_of_sensor_data, global_optimal_temp
     # newest_outdoor_temperature = find_newest_temperature(
     #     list_of_PiData_objects=list_of_sensor_data, indoor=False)
 
-    outdoor_PiData_object_list = filter_indoor(sensor_list, indoor=False)
+    outdoor_PiData_object_list = filter_indoor(
+        list_of_sensor_data, indoor=False)
     outdoor_average = average_temperature(outdoor_PiData_object_list)
 
-    indoor_PiData_object_list = filter_indoor(sensor_list, indoor=True)
+    indoor_PiData_object_list = filter_indoor(list_of_sensor_data, indoor=True)
     indoor_average = average_temperature(indoor_PiData_object_list)
 
     # Indoor temp correction (Temperature rises or falls rapidly)

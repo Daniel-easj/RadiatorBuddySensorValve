@@ -16,5 +16,5 @@ def create_pidata(id, temperature, location, inDoor, timestamp):
 # Function to display data from PiData object in string format
 
 
-def __str__(self):
-    return (f"MAC-address : {self.id}, temperature : {self.temperature}, location : {self.location}, indoor : {self.inDoor}, timestamp : {self.timestamp}")
+# def __str__(self):
+#     return (f"MAC-address : {self.id}, temperature : {self.temperature}, location : {self.location}, indoor : {self.inDoor}, timestamp : {self.timestamp}")

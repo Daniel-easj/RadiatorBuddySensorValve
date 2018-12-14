@@ -14,5 +14,5 @@ def create_weatherdata(temperature, dt_txt, cloud_percentage):
 # Function to display data from WeatherData object in string format
 
 
-def __str__(self):
-    return (f"Temperature : {self.temperature}, time : {self.dt_txt}, cloud coverage : {self.cloud_percentage}%")
+# def __str__(self):
+#     return (f"Temperature : {self.temperature}, time : {self.dt_txt}, cloud coverage : {self.cloud_percentage}%")

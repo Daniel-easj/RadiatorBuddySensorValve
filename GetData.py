@@ -134,6 +134,27 @@ def get_room(MAC_address):
     return room_object
 
 
-sensor_list = create_sensor_list()
-indoor_list = filter_indoor(sensor_list, indoor=False)
-print(newest_temperature(indoor_list))
+def get_all_rooms():
+    room_api_list = extract_json_api_data(ROOMS_REST_URI)
+    room_list = list()
+    for element in room_api_list:
+        location_string = element['location']
+        if location_string.strip() == '':
+            location_string_fixed = None
+        else:
+            location_string_fixed = location_string.strip()
+        room_object = create_new_name('room')
+        room_object = RoomData.create_roomdata(element['macAddress'], location_string_fixed, element['inDoor'],
+                                               element['optimalTemperature'], element['minTemperature'], element['maxTemperature'])
+        room_list.append(room_object)
+    return room_list
+
+
+def transfer_room_data_to_pidata_object(sensor_list):
+    room_list = get_all_rooms()
+    for sensor in sensor_list:
+        for room in room_list:
+            if sensor.id == room.macAddress:
+                sensor.location = room.location
+                sensor.inDoor = room.inDoor
+    return sensor_list
