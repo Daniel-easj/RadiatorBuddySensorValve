@@ -12,13 +12,9 @@ BROADCAST_TO_PORT = 11912
 # Interface name
 ETHERNET_INTERFACE = 'wlan0'
 
-# Function to get temperature
-
 
 def get_sensor_temperature():
     return sense.get_temperature()
-
-# Function to get MAC-address
 
 
 def get_MAC(interface):
@@ -28,8 +24,6 @@ def get_MAC(interface):
     except:
         mac_hex_string = "00:00:00:00:00:00"
     return mac_hex_string[0:17]
-
-# Function to create a JSON string
 
 
 def json_string():

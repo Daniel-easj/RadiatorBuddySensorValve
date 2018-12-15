@@ -3,23 +3,14 @@ from Sensor import *
 
 
 while True:
-    #
-    #
-    # Logic related to UDP broadcast of sensor readings
-    # Calls function to create JSON
     data = json_string()
-    # Sends the JSON object as bytes
     socket.sendto(bytes(data, "UTF-8"), ('<broadcast>', BROADCAST_TO_PORT))
-    # Print the JSON object to console
     print(data)
-    #
-    #
-    # Logic related to temperature regulation
+
     now = datetime.now()
     ten_hours_from_now = now + timedelta(hours=10)
     one_day_forecast_list = create_forecast_list(
         datetime_hours_from_now=ten_hours_from_now)
-
     this_room = get_room(get_MAC(ETHERNET_INTERFACE))
     global_optimal_temperature = this_room.optimalTemperature
     minimum_room_temperature = this_room.minTemperature

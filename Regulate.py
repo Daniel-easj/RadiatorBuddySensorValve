@@ -4,12 +4,8 @@ from Sensor import *
 
 def suggested_new_temperature(forecast, list_of_sensor_data, global_optimal_temperature, minimum_room_temperature, maximum_room_temperature, sensitivity, temperature_if_none_set):
     new_temperature = 0
-    # Average of forecast for X time
     forecast_average = average_temperature(forecast)
-    # Get current temp of Pi
     current_sensor_temp = get_sensor_temperature()
-    # newest_outdoor_temperature = find_newest_temperature(
-    #     list_of_PiData_objects=list_of_sensor_data, indoor=False)
 
     outdoor_PiData_object_list = filter_indoor(
         list_of_sensor_data, indoor=False)
